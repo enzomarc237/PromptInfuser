@@ -1,0 +1,5 @@
+{
+  "name": "PromptInfuser AI",
+  "description": "An advanced UI design and development assistant powered by Gemini. Generate and refine UI prompts, create designs from images, generate code, and scaffold entire projects with AI.",
+  "requestFramePermissions": []
+}
