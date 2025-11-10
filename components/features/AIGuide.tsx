@@ -1,9 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card } from '../shared/Card';
 import { Button } from '../shared/Button';
 import { AI_DESIGN_TOOLS } from '../../constants';
 import { getAIGuide } from '../../services/geminiService';
+import { MarkdownPreview } from '../shared/MarkdownPreview';
+import { CheckIcon, CopyIcon } from '../shared/Icon';
 
 const AIGuide: React.FC = () => {
   const [selectedTool, setSelectedTool] = useState<string>(AI_DESIGN_TOOLS[0]);
@@ -11,6 +12,7 @@ const AIGuide: React.FC = () => {
   const [guide, setGuide] = useState<string>('');
   const [sources, setSources] = useState<any[]>([]);
   const [error, setError] = useState<string>('');
+  const [isMarkdownCopied, setIsMarkdownCopied] = useState(false);
 
   const handleGenerate = async () => {
     setIsLoading(true);
@@ -28,6 +30,14 @@ const AIGuide: React.FC = () => {
       setIsLoading(false);
     }
   };
+  
+  const handleCopyMarkdown = () => {
+    if (!guide) return;
+    navigator.clipboard.writeText(guide);
+    setIsMarkdownCopied(true);
+    setTimeout(() => setIsMarkdownCopied(false), 2000);
+  };
+
 
   return (
     <div className="space-y-6">
@@ -56,8 +66,18 @@ const AIGuide: React.FC = () => {
       
       {guide && (
         <Card>
-          <h3 className="text-lg font-semibold mb-4">Guide for {selectedTool}</h3>
-          <div className="prose prose-invert max-w-none text-text-secondary whitespace-pre-wrap">{guide}</div>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Guide for {selectedTool}</h3>
+             <button
+                onClick={handleCopyMarkdown}
+                className="p-1.5 bg-surface rounded-md text-text-secondary hover:text-text-primary transition-colors flex items-center space-x-2 text-xs"
+                aria-label="Copy Markdown"
+            >
+                {isMarkdownCopied ? <CheckIcon className="w-4 h-4 text-green-500" /> : <CopyIcon className="w-4 h-4" />}
+                <span>Copy Markdown</span>
+            </button>
+          </div>
+          <MarkdownPreview content={guide} />
            {sources.length > 0 && (
             <div className="mt-6">
               <h4 className="font-semibold text-text-primary">Sources:</h4>

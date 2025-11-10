@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Card } from '../shared/Card';
 import { Button } from '../shared/Button';
 import { generateUIPrompt, refineUIPrompt } from '../../services/geminiService';
+import { ResultDisplay } from '../shared/ResultDisplay';
 
 const PromptGenerator: React.FC = () => {
   const [task, setTask] = useState('');
@@ -90,10 +91,7 @@ const PromptGenerator: React.FC = () => {
       {error && <Card><p className="text-red-500">{error}</p></Card>}
       
       {result && (
-        <Card>
-          <h3 className="text-lg font-semibold mb-4">Result</h3>
-          <p className="text-text-secondary whitespace-pre-wrap">{result}</p>
-        </Card>
+        <ResultDisplay title="Result" content={result} />
       )}
     </div>
   );

@@ -3,6 +3,7 @@ import { Card } from '../shared/Card';
 import { Button } from '../shared/Button';
 import { generateMockup } from '../../services/geminiService';
 import { MockupComponent } from '../../types';
+import { CheckIcon, CopyIcon } from '../shared/Icon';
 
 const RenderComponent: React.FC<{ component: MockupComponent }> = ({ component }) => {
   const renderChildren = () => component.children?.map((child, index) => <RenderComponent key={index} component={child} />);
@@ -31,6 +32,7 @@ const MockupGenerator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [mockup, setMockup] = useState<MockupComponent | null>(null);
   const [error, setError] = useState('');
+  const [isJsonCopied, setIsJsonCopied] = useState(false);
 
   const handleGenerate = async () => {
     if (!prompt) {
@@ -49,6 +51,13 @@ const MockupGenerator: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+  
+  const handleCopyJson = () => {
+    if (!mockup) return;
+    navigator.clipboard.writeText(JSON.stringify(mockup, null, 2));
+    setIsJsonCopied(true);
+    setTimeout(() => setIsJsonCopied(false), 2000);
   };
 
   return (
@@ -78,7 +87,17 @@ const MockupGenerator: React.FC = () => {
       
       {mockup && (
         <Card>
-          <h3 className="text-lg font-semibold mb-4">Generated Mockup</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Generated Mockup</h3>
+            <button
+                onClick={handleCopyJson}
+                className="p-1.5 bg-surface rounded-md text-text-secondary hover:text-text-primary transition-colors flex items-center space-x-2 text-xs"
+                aria-label="Copy JSON"
+            >
+                {isJsonCopied ? <CheckIcon className="w-4 h-4 text-green-500" /> : <CopyIcon className="w-4 h-4" />}
+                <span>Copy JSON</span>
+            </button>
+          </div>
           <div className="bg-brand-bg border border-border-color rounded-lg aspect-[9/16] w-full max-w-sm mx-auto overflow-hidden">
             <RenderComponent component={mockup} />
           </div>

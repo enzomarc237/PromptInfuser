@@ -5,6 +5,9 @@ import { CodeBlock } from '../shared/CodeBlock';
 import { scaffoldProject } from '../../services/geminiService';
 import { GeneratedFile, TechStack } from '../../types';
 import { TECH_STACKS } from '../../constants';
+import { MarkdownPreview } from '../shared/MarkdownPreview';
+
+declare var JSZip: any;
 
 const ProjectScaffolder: React.FC = () => {
   const [description, setDescription] = useState('');
@@ -30,6 +33,31 @@ const ProjectScaffolder: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDownload = async () => {
+    const zip = new JSZip();
+    files.forEach(file => {
+      // Handle folder structures in file paths
+      const pathParts = file.name.split('/');
+      if (pathParts.length > 1) {
+        let folder = zip;
+        for (let i = 0; i < pathParts.length - 1; i++) {
+          folder = folder.folder(pathParts[i])!;
+        }
+        folder.file(pathParts[pathParts.length - 1], file.content);
+      } else {
+        zip.file(file.name, file.content);
+      }
+    });
+    const blob = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "ai-scaffolded-project.zip";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
   };
 
   const getLanguage = (fileName: string) => {
@@ -89,13 +117,22 @@ const ProjectScaffolder: React.FC = () => {
       
       {files.length > 0 && (
         <Card>
-          <h3 className="text-lg font-semibold mb-4">Generated Project Files</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Generated Project Files</h3>
+            <Button onClick={handleDownload}>Download Project (.zip)</Button>
+          </div>
           <div className="space-y-4">
             {files.map((file) => (
               <details key={file.name} className="bg-brand-bg border border-border-color rounded-lg">
                 <summary className="font-mono text-sm p-3 cursor-pointer text-text-primary">{file.name}</summary>
                 <div className="border-t border-border-color">
-                  <CodeBlock code={file.content} language={getLanguage(file.name)} />
+                  {file.name.toLowerCase().endsWith('.md') ? (
+                    <div className="p-4">
+                      <MarkdownPreview content={file.content} />
+                    </div>
+                  ) : (
+                    <CodeBlock code={file.content} language={getLanguage(file.name)} />
+                  )}
                 </div>
               </details>
             ))}

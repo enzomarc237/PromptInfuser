@@ -4,6 +4,7 @@ import { Card } from '../shared/Card';
 import { Button } from '../shared/Button';
 import { FileUpload } from '../shared/FileUpload';
 import { generatePromptFromImage, fileToBase64 } from '../../services/geminiService';
+import { ResultDisplay } from '../shared/ResultDisplay';
 
 const ImageToPrompt: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -48,10 +49,7 @@ const ImageToPrompt: React.FC = () => {
       {error && <Card><p className="text-red-500">{error}</p></Card>}
       
       {generatedPrompt && (
-        <Card>
-          <h3 className="text-lg font-semibold mb-4">Generated Prompt</h3>
-          <p className="text-text-secondary whitespace-pre-wrap">{generatedPrompt}</p>
-        </Card>
+        <ResultDisplay title="Generated Prompt" content={generatedPrompt} />
       )}
     </div>
   );
