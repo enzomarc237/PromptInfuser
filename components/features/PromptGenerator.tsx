@@ -4,6 +4,7 @@ import { Card } from '../shared/Card';
 import { Button } from '../shared/Button';
 import { generateUIPrompt, refineUIPrompt } from '../../services/geminiService';
 import { ResultDisplay } from '../shared/ResultDisplay';
+import { savePrompt } from '../../utils/promptManager.ts';
 
 const PromptGenerator: React.FC = () => {
   const [task, setTask] = useState('');
@@ -43,6 +44,11 @@ const PromptGenerator: React.FC = () => {
     }
   };
 
+  const handleSave = () => {
+    if (result) {
+      savePrompt(result);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -91,7 +97,11 @@ const PromptGenerator: React.FC = () => {
       {error && <Card><p className="text-red-500">{error}</p></Card>}
       
       {result && (
-        <ResultDisplay title="Result" content={result} />
+        <ResultDisplay 
+            title="Result" 
+            content={result}
+            onSave={handleSave} 
+        />
       )}
     </div>
   );

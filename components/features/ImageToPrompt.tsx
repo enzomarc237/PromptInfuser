@@ -5,6 +5,7 @@ import { Button } from '../shared/Button';
 import { FileUpload } from '../shared/FileUpload';
 import { generatePromptFromImage, fileToBase64 } from '../../services/geminiService';
 import { ResultDisplay } from '../shared/ResultDisplay';
+import { savePrompt } from '../../utils/promptManager.ts';
 
 const ImageToPrompt: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -33,6 +34,12 @@ const ImageToPrompt: React.FC = () => {
     }
   };
 
+  const handleSave = () => {
+    if (generatedPrompt) {
+      savePrompt(generatedPrompt);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -49,7 +56,11 @@ const ImageToPrompt: React.FC = () => {
       {error && <Card><p className="text-red-500">{error}</p></Card>}
       
       {generatedPrompt && (
-        <ResultDisplay title="Generated Prompt" content={generatedPrompt} />
+        <ResultDisplay 
+          title="Generated Prompt" 
+          content={generatedPrompt}
+          onSave={handleSave}
+        />
       )}
     </div>
   );

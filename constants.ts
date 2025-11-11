@@ -1,6 +1,6 @@
 
 import { Feature, FeatureConfig } from './types';
-import { SparklesIcon, ImageIcon, LayoutTemplateIcon, CodeIcon, FolderGit2Icon, BookOpenIcon } from './components/shared/Icon';
+import { SparklesIcon, ImageIcon, LayoutTemplateIcon, CodeIcon, FolderGit2Icon, BookOpenIcon, BookmarkIcon } from './components/shared/Icon';
 
 export const FEATURES: FeatureConfig[] = [
   { id: Feature.PROMPT_GENERATOR, name: 'Prompt Generator', icon: SparklesIcon },
@@ -9,6 +9,7 @@ export const FEATURES: FeatureConfig[] = [
   { id: Feature.IMAGE_TO_CODE, name: 'Image to Code', icon: CodeIcon },
   { id: Feature.PROJECT_SCAFFOLDER, name: 'Project Scaffolder', icon: FolderGit2Icon },
   { id: Feature.AI_GUIDE, name: 'AI Guide', icon: BookOpenIcon },
+  { id: Feature.SAVED_PROMPTS, name: 'Saved Prompts', icon: BookmarkIcon },
 ];
 
 export const TECH_STACKS = ['HTML/Tailwind', 'React/Tailwind'];

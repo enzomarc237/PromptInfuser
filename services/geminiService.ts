@@ -63,7 +63,7 @@ export const generateMockup = async (prompt: string): Promise<MockupComponent> =
     const response = await generateContentWithRetry({
         model: MODELS.PRO,
         contents: `You are a UI layout generator. Based on the user's prompt, create a JSON representation of a web page.
-        The JSON must follow this schema: { "type": "OBJECT", "properties": { "component": { "type": "STRING", "enum": ["container", "header", "text", "button", "input", "card"] }, "text": { "type": "STRING" }, "props": { "type": "OBJECT" }, "children": { "type": "ARRAY", "items": { "$ref": "#" } } } }.
+        The JSON must follow this schema: { "type": "OBJECT", "properties": { "component": { "type": "STRING", "enum": ["container", "header", "text", "button", "input", "card"] }, "text": { "type": "STRING" }, "children": { "type": "ARRAY", "items": { "$ref": "#" } } } }.
         User prompt: "${prompt}"`,
         config: {
             responseMimeType: "application/json",
@@ -72,7 +72,6 @@ export const generateMockup = async (prompt: string): Promise<MockupComponent> =
                 properties: {
                     component: { type: Type.STRING },
                     text: { type: Type.STRING, nullable: true },
-                    props: { type: Type.OBJECT, nullable: true },
                     children: { 
                         type: Type.ARRAY, 
                         items: {
@@ -80,9 +79,6 @@ export const generateMockup = async (prompt: string): Promise<MockupComponent> =
                             properties: {
                                 component: { type: Type.STRING },
                                 text: { type: Type.STRING, nullable: true },
-                                props: { type: Type.OBJECT, nullable: true },
-                                // FIX: Corrected the recursive schema definition. The previous one used an invalid empty object for items.
-                                // This now defines properties for nested children, terminating the recursion for the schema's validity.
                                 children: {
                                     type: Type.ARRAY,
                                     items: {
@@ -90,7 +86,6 @@ export const generateMockup = async (prompt: string): Promise<MockupComponent> =
                                         properties: {
                                             component: { type: Type.STRING },
                                             text: { type: Type.STRING, nullable: true },
-                                            props: { type: Type.OBJECT, nullable: true },
                                         },
                                     },
                                     nullable: true

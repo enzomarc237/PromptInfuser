@@ -1,23 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PromptInfuser AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        --color-brand-bg: #f9fafb;
+        --color-surface: #ffffff;
+        --color-primary: #8a2be2;
+        --color-primary-hover: #9932cc;
+        --color-text-primary: #1f2937;
+        --color-text-secondary: #6b7280;
+        --color-border-color: #e5e7eb;
+      }
+      html.dark {
+        --color-brand-bg: #121212;
+        --color-surface: #1e1e1e;
+        --color-text-primary: #ffffff;
+        --color-text-secondary: #b3b3b3;
+        --color-border-color: #333333;
+      }
+      body {
+        background-color: var(--color-brand-bg);
+        color: var(--color-text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+    </style>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              'brand-bg': '#121212',
-              'surface': '#1e1e1e',
-              'primary': '#8a2be2',
-              'primary-hover': '#9932cc',
-              'text-primary': '#ffffff',
-              'text-secondary': '#b3b3b3',
-              'border-color': '#333333',
+              'brand-bg': 'var(--color-brand-bg)',
+              'surface': 'var(--color-surface)',
+              'primary': 'var(--color-primary)',
+              'primary-hover': 'var(--color-primary-hover)',
+              'text-primary': 'var(--color-text-primary)',
+              'text-secondary': 'var(--color-text-secondary)',
+              'border-color': 'var(--color-border-color)',
             },
           },
         },

@@ -8,6 +8,7 @@ export enum Feature {
   IMAGE_TO_CODE = 'Image to Code',
   PROJECT_SCAFFOLDER = 'Project Scaffolder',
   AI_GUIDE = 'AI Guide',
+  SAVED_PROMPTS = 'Saved Prompts',
 }
 
 export interface FeatureConfig {
@@ -29,4 +30,10 @@ export interface MockupComponent {
     text?: string;
     props?: Record<string, string>;
     children?: MockupComponent[];
+}
+
+export interface SavedPrompt {
+  id: string;
+  text: string;
+  createdAt: string;
 }
