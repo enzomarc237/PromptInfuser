@@ -37,3 +37,7 @@ export interface SavedPrompt {
   text: string;
   createdAt: string;
 }
+
+export interface HistoryPrompt extends SavedPrompt {
+  feature: Feature;
+}

@@ -5,13 +5,16 @@ import { Button } from '../shared/Button';
 import { FileUpload } from '../shared/FileUpload';
 import { generatePromptFromImage, fileToBase64 } from '../../services/geminiService';
 import { ResultDisplay } from '../shared/ResultDisplay';
-import { savePrompt } from '../../utils/promptManager.ts';
+import { addPromptToHistory, savePrompt } from '../../utils/promptManager.ts';
+import { Feature } from '../../types';
+import { PromptHistory } from '../shared/PromptHistory';
 
 const ImageToPrompt: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [error, setError] = useState('');
+  const [refreshHistory, setRefreshHistory] = useState(0);
 
   const handleGenerate = async () => {
     if (!file) {
@@ -26,6 +29,8 @@ const ImageToPrompt: React.FC = () => {
       const imagePart = { inlineData: { data: base64Image, mimeType: file.type } };
       const prompt = await generatePromptFromImage(imagePart);
       setGeneratedPrompt(prompt);
+      addPromptToHistory(prompt, Feature.IMAGE_TO_PROMPT);
+      setRefreshHistory(prev => prev + 1);
     } catch (err) {
       setError('Failed to generate prompt. Please try again.');
       console.error(err);
@@ -62,6 +67,11 @@ const ImageToPrompt: React.FC = () => {
           onSave={handleSave}
         />
       )}
+
+      <PromptHistory
+        features={[Feature.PROMPT_GENERATOR, Feature.IMAGE_TO_PROMPT]}
+        refreshTrigger={refreshHistory}
+      />
     </div>
   );
 };

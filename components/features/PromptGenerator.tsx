@@ -4,7 +4,9 @@ import { Card } from '../shared/Card';
 import { Button } from '../shared/Button';
 import { generateUIPrompt, refineUIPrompt } from '../../services/geminiService';
 import { ResultDisplay } from '../shared/ResultDisplay';
-import { savePrompt } from '../../utils/promptManager.ts';
+import { addPromptToHistory, savePrompt } from '../../utils/promptManager.ts';
+import { Feature } from '../../types';
+import { PromptHistory } from '../shared/PromptHistory';
 
 const PromptGenerator: React.FC = () => {
   const [task, setTask] = useState('');
@@ -13,6 +15,7 @@ const PromptGenerator: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'generate' | 'refine'>('generate');
   const [result, setResult] = useState('');
   const [error, setError] = useState('');
+  const [refreshHistory, setRefreshHistory] = useState(0);
 
   const handleGenerate = async () => {
     setIsLoading(true);
@@ -21,6 +24,8 @@ const PromptGenerator: React.FC = () => {
     try {
       const prompt = await generateUIPrompt(task);
       setResult(prompt);
+      addPromptToHistory(prompt, Feature.PROMPT_GENERATOR);
+      setRefreshHistory(prev => prev + 1);
     } catch (err) {
       setError('Failed to generate prompt. Please try again.');
       console.error(err);
@@ -36,6 +41,8 @@ const PromptGenerator: React.FC = () => {
     try {
         const prompt = await refineUIPrompt(existingPrompt);
         setResult(prompt);
+        addPromptToHistory(prompt, Feature.PROMPT_GENERATOR);
+        setRefreshHistory(prev => prev + 1);
     } catch (err) {
         setError('Failed to refine prompt. Please try again.');
         console.error(err);
@@ -48,6 +55,12 @@ const PromptGenerator: React.FC = () => {
     if (result) {
       savePrompt(result);
     }
+  };
+
+  const handleUsePromptFromHistory = (text: string) => {
+    setExistingPrompt(text);
+    setActiveTab('refine');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -63,7 +76,7 @@ const PromptGenerator: React.FC = () => {
             </div>
             
             {activeTab === 'generate' && (
-                <div className="space-y-4">
+                <div className="space-y-4 pt-4">
                     <label htmlFor="task-description" className="block text-sm font-medium text-text-secondary">Describe the UI you want to design:</label>
                     <textarea
                     id="task-description"
@@ -78,7 +91,7 @@ const PromptGenerator: React.FC = () => {
             )}
 
             {activeTab === 'refine' && (
-                <div className="space-y-4">
+                <div className="space-y-4 pt-4">
                      <label htmlFor="existing-prompt" className="block text-sm font-medium text-text-secondary">Paste your existing prompt:</label>
                     <textarea
                     id="existing-prompt"
@@ -103,6 +116,12 @@ const PromptGenerator: React.FC = () => {
             onSave={handleSave} 
         />
       )}
+
+      <PromptHistory 
+        features={[Feature.PROMPT_GENERATOR, Feature.IMAGE_TO_PROMPT]}
+        onUsePrompt={handleUsePromptFromHistory}
+        refreshTrigger={refreshHistory}
+      />
     </div>
   );
 };
